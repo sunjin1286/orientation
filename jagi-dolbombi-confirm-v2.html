@@ -370,6 +370,7 @@
       </div>
     </div>
 
+    <div id="quiz-warn" style="display:none;background:#ffe5e5;border-left:4px solid #F97B6B;border-radius:0 10px 10px 0;padding:14px 16px;margin-bottom:16px;font-size:13px;color:#b03030;font-weight:700;line-height:1.6;">⚠️ 틀린 문제가 있어요! 각 문제의 ✏️ 다시 선택하기 버튼을 눌러 정답을 맞혀야 다음 단계로 넘어갈 수 있습니다.</div>
     <button class="btn btn-p" id="btn3" onclick="go(4)" disabled>다음 단계로 →</button>
     <button class="btn btn-o" onclick="go(2)">← 이전으로</button>
   </div>
@@ -569,14 +570,20 @@ function updProg(){
   if(done===3){
     document.getElementById('scorebox').style.display='block';
     document.getElementById('fscore').textContent=sc;
-    const msgs=['틀린 문제를 확인하고 안내서를 한번 더 살펴보세요 💙',
-                '거의 다 맞히셨어요! 틀린 부분의 설명을 확인해 보세요.',
-                '완벽해요! 안내서 내용을 정확히 이해하셨네요 🎉'];
-    document.getElementById('fmsg').textContent=msgs[Math.min(sc,2)];
-    document.getElementById('btn3').disabled=false;
+    if(sc===3){
+      document.getElementById('fmsg').textContent='완벽해요! 안내서 내용을 정확히 이해하셨네요 🎉';
+      document.getElementById('btn3').disabled=false;
+      document.getElementById('quiz-warn').style.display='none';
+    } else {
+      const wrong = 3 - sc;
+      document.getElementById('fmsg').textContent=wrong+'문제가 틀렸어요. ✏️ 다시 선택하기 버튼으로 수정 후 모두 맞혀야 다음 단계로 넘어갈 수 있습니다.';
+      document.getElementById('btn3').disabled=true;
+      document.getElementById('quiz-warn').style.display='block';
+    }
   }else{
     document.getElementById('scorebox').style.display='none';
     document.getElementById('btn3').disabled=true;
+    document.getElementById('quiz-warn').style.display='none';
   }
 }
 
