@@ -270,12 +270,15 @@
 
     <div class="pdf-wrap">
       <div class="pdf-hd">📄 서울시 가족돌봄청소년·청년 자기돌봄비 안내서</div>
-      <iframe id="pdf-frame" src="./자기돌봄비안내.pdf" title="자기돌봄비 안내서"></iframe>
+      <iframe id="pdf-frame"
+        src="https://drive.google.com/file/d/1O0UrQ1nJfMNGM_8wCX3olMkdhgxga6LI/preview"
+        allow="autoplay"
+        title="자기돌봄비 안내서"></iframe>
     </div>
 
     <div class="info" style="margin-bottom:16px;">
       ℹ️ PDF가 보이지 않으면 아래 버튼으로 별도 탭에서 확인하세요.<br><br>
-      <a href="./자기돌봄비안내.pdf" target="_blank" id="pdf-link"
+      <a href="https://drive.google.com/file/d/1O0UrQ1nJfMNGM_8wCX3olMkdhgxga6LI/view" target="_blank"
          style="display:inline-block;padding:8px 16px;background:var(--navy);color:#fff;
                 border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;">
         📄 안내서 새 탭에서 열기
@@ -457,7 +460,7 @@
 
 <script>
 // ── 설정 ──────────────────────────────────────────────────────────
-const GS_URL = 'https://script.google.com/macros/s/여기에_구글앱스스크립트_URL_입력/exec';
+const GS_URL = 'https://script.google.com/macros/s/AKfycbwfNWJkfxeesSEgMDmv6j_Hh0AoLr6qP6eKRN_wPFgEuX1lE-01eQzRI_zLF9Yi_jJV/exec';
 
 // ── 상태 ──────────────────────────────────────────────────────────
 let cur = 1;
@@ -607,7 +610,11 @@ function submit(){
   };
   document.getElementById('btsub').disabled=true;
   document.getElementById('loading').classList.add('show');
-  fetch(GS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(pl)})
+
+  // FormData 방식으로 전송 (CORS 우회, 모바일 포함 안정적)
+  const fd = new FormData();
+  Object.keys(pl).forEach(k => fd.append(k, pl[k]));
+  fetch(GS_URL, {method:'POST', mode:'no-cors', body:fd})
     .then(()=>done(pl)).catch(()=>done(pl));
 }
 
