@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>자기돌봄비 안내 확인서 | WAY 가족돌봄청년 지원사업</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+  :root {
+    --navy:#2E5B8F; --navy-dark:#1e3f66; --navy-light:#4a7ab5;
+    --peach:#F97B6B; --yellow:#FAE05A; --bg:#FAFBFF; --card:#fff;
+    --text:#1a2133; --muted:#6b7a99; --border:#dce4f0;
+    --ok:#34C58B; --ng:#F97B6B; --r:16px;
+    --sh:0 4px 20px rgba(46,91,143,.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+  /* 헤더 */
+  .hd{background:linear-gradient(135deg,var(--navy-dark) 0%,var(--navy) 60%,var(--navy-light) 100%);
+      color:#fff;padding:40px 24px 48px;text-align:center;position:relative;overflow:hidden;}
+  .hd::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;
+              background:rgba(255,255,255,.06);border-radius:50%;}
+  .hd::after{content:'';position:absolute;bottom:-60px;left:-30px;width:240px;height:240px;
+             background:rgba(255,255,255,.04);border-radius:50%;}
+  .badge{display:inline-block;background:var(--yellow);color:var(--navy-dark);font-size:11px;
+         font-weight:700;letter-spacing:.08em;padding:4px 12px;border-radius:20px;margin-bottom:14px;}
+  .hd h1{font-size:22px;font-weight:900;line-height:1.4;margin-bottom:8px;}
+  .hd h1 span{color:var(--yellow);}
+  .hd p{font-size:13px;color:rgba(255,255,255,.80);line-height:1.6;}
+
+  /* 스텝바 */
+  .sb{background:#fff;border-bottom:1px solid var(--border);padding:14px 16px;
+      display:flex;justify-content:center;position:sticky;top:0;z-index:100;
+      box-shadow:0 2px 8px rgba(46,91,143,.07);}
+  .si{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;max-width:68px;position:relative;}
+  .si:not(:last-child)::after{content:'';position:absolute;top:14px;right:-50%;width:100%;height:2px;
+                               background:var(--border);z-index:-1;}
+  .si.done:not(:last-child)::after{background:var(--navy);}
+  .sd{width:28px;height:28px;border-radius:50%;background:var(--border);color:var(--muted);
+      font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;
+      transition:all .3s;position:relative;z-index:1;}
+  .si.active .sd{background:var(--navy);color:#fff;}
+  .si.done .sd{background:var(--ok);color:#fff;}
+  .sl{font-size:10px;color:var(--muted);font-weight:500;white-space:nowrap;text-align:center;}
+  .si.active .sl{color:var(--navy);font-weight:700;}
+  .si.done .sl{color:var(--ok);}
+
+  /* 컨테이너 */
+  .wrap{max-width:600px;margin:0 auto;padding:24px 16px 80px;}
+
+  /* 카드 */
+  .card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);
+        padding:28px 24px;margin-bottom:16px;display:none;animation:fi .3s ease;}
+  .card.active{display:block;}
+  @keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.10em;color:var(--navy);
+           text-transform:uppercase;margin-bottom:6px;}
+  .ttl{font-size:18px;font-weight:900;color:var(--text);margin-bottom:4px;line-height:1.4;}
+  .desc{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:24px;}
+
+  /* 인풋 */
+  .field{margin-bottom:20px;}
+  .field label{display:block;font-size:13px;font-weight:700;color:var(--text);margin-bottom:7px;}
+  .req{color:var(--peach);margin-left:2px;}
+  .field input{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:13px 16px;
+               font-size:15px;font-family:'Noto Sans KR',sans-serif;color:var(--text);
+               background:var(--bg);transition:border-color .2s;outline:none;}
+  .field input:focus{border-color:var(--navy);background:#fff;}
+  .field input::placeholder{color:#b0bcd0;}
+  .errmsg{color:var(--ng);font-size:12px;margin-top:6px;display:none;font-weight:500;}
+
+  /* 문의처 박스 */
+  .contact-box{background:#EEF4FF;border-radius:12px;padding:18px 20px;margin-bottom:20px;}
+  .ct-title{font-size:12px;font-weight:700;color:var(--navy);letter-spacing:.05em;margin-bottom:12px;}
+  .ct-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+  .ct-row:last-child{margin-bottom:0;}
+  .ct-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;
+           justify-content:center;font-size:18px;flex-shrink:0;}
+  .ct-icon.ph{background:#ddeeff;}
+  .ct-icon.kk{background:#FEE500;}
+  .ct-info strong{display:block;font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;}
+  .ct-info span{font-size:12px;color:var(--muted);}
+  .ct-info a{color:var(--navy);font-weight:700;text-decoration:none;}
+
+  /* PDF 뷰어 */
+  .pdf-wrap{border:2px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px;background:#f0f4f8;}
+  .pdf-hd{background:var(--navy);color:#fff;padding:10px 16px;font-size:13px;font-weight:700;
+          display:flex;align-items:center;gap:8px;}
+  .pdf-wrap iframe{width:100%;height:480px;border:none;display:block;}
+
+  /* PDF 확인 체크 */
+  .pdf-check{display:flex;align-items:flex-start;gap:14px;padding:16px 18px;border-radius:12px;
+             border:2px solid var(--border);background:var(--bg);cursor:pointer;
+             transition:all .2s;margin-bottom:16px;user-select:none;}
+  .pdf-check.on{border-color:var(--ok);background:#f0fdf8;}
+  .pdf-check input{display:none;}
+  .pck{width:24px;height:24px;border-radius:7px;border:2px solid var(--border);flex-shrink:0;
+       display:flex;align-items:center;justify-content:center;transition:all .2s;
+       font-size:14px;color:transparent;margin-top:1px;}
+  .pdf-check.on .pck{background:var(--ok);border-color:var(--ok);color:#fff;}
+  .pct strong{display:block;font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px;}
+  .pct span{font-size:12px;color:var(--muted);}
+
+  /* 퀴즈 */
+  .qblock{background:var(--bg);border-radius:12px;padding:20px;margin-bottom:16px;
+          border:1.5px solid var(--border);}
+  .qnum{font-size:11px;font-weight:700;color:var(--navy-light);margin-bottom:6px;letter-spacing:.05em;}
+  .qq{font-size:14px;font-weight:700;color:var(--text);line-height:1.6;margin-bottom:14px;}
+  .qopts{display:flex;flex-direction:column;gap:8px;}
+  .qopt{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:9px;
+        border:1.5px solid var(--border);background:#fff;cursor:pointer;transition:all .18s;
+        font-size:13px;color:var(--text);line-height:1.5;}
+  .qopt:hover{border-color:var(--navy-light);background:#f0f6ff;}
+  .qopt.sel{border-color:var(--navy);background:#eef4ff;font-weight:700;}
+  .qopt.oc{border-color:var(--ok)!important;background:#f0fdf8!important;font-weight:700;}
+  .qopt.ow{border-color:var(--ng)!important;background:#fff5f5!important;}
+  .odot{width:22px;height:22px;border-radius:50%;border:2px solid #b0bcd0;flex-shrink:0;
+        display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;
+        color:var(--muted);transition:all .18s;}
+  .qopt.sel .odot{border-color:var(--navy);color:var(--navy);background:#deeaff;}
+  .qopt.oc .odot{border-color:var(--ok);color:var(--ok);background:#dcfff0;}
+  .qopt.ow .odot{border-color:var(--ng);color:var(--ng);background:#ffe5e5;}
+
+  .qresult{display:none;margin-top:12px;padding:10px 14px;border-radius:9px;
+           font-size:12px;font-weight:700;line-height:1.6;gap:8px;}
+  .qresult.ok{display:flex;background:#dcfff0;color:#1a6644;}
+  .qresult.ng{display:flex;background:#ffe5e5;color:#b03030;}
+  .retry-btn{display:none;margin-top:10px;padding:8px 14px;border-radius:8px;
+             border:1.5px solid var(--navy);background:transparent;color:var(--navy);
+             font-size:12px;font-weight:700;font-family:'Noto Sans KR',sans-serif;
+             cursor:pointer;transition:all .18s;}
+  .retry-btn:hover{background:#eef4ff;}
+  .retry-btn.show{display:inline-block;}
+
+  /* 퀴즈 진행 */
+  .prog-wrap{margin-bottom:20px;}
+  .prog-label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px;}
+  .prog-bar{height:6px;background:var(--border);border-radius:999px;overflow:hidden;}
+  .prog-fill{height:100%;background:linear-gradient(90deg,var(--navy),var(--navy-light));
+             border-radius:999px;transition:width .4s ease;width:0%;}
+
+  /* 점수 요약 */
+  .score-box{background:linear-gradient(135deg,var(--navy-dark),var(--navy));color:#fff;
+             border-radius:14px;padding:24px;text-align:center;margin-bottom:20px;}
+  .snum{font-size:48px;font-weight:900;line-height:1;color:var(--yellow);}
+  .sden{font-size:22px;font-weight:500;opacity:.7;}
+  .smsg{font-size:14px;margin-top:8px;opacity:.9;line-height:1.6;}
+
+  /* 이폼사인 */
+  .elist{display:flex;flex-direction:column;gap:12px;}
+  .eitem{display:flex;align-items:flex-start;gap:14px;padding:16px 18px;border-radius:12px;
+         border:1.5px solid var(--border);background:var(--bg);cursor:pointer;
+         transition:all .2s;user-select:none;}
+  .eitem:hover{border-color:var(--navy-light);}
+  .eitem.on{border-color:var(--ok);background:#f0fdf8;}
+  .eitem input{display:none;}
+  .eck{width:24px;height:24px;border-radius:7px;border:2px solid var(--border);flex-shrink:0;
+       display:flex;align-items:center;justify-content:center;transition:all .2s;
+       margin-top:1px;font-size:14px;color:transparent;}
+  .eitem.on .eck{background:var(--ok);border-color:var(--ok);color:#fff;}
+  .etxt strong{display:block;font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px;}
+  .etxt span{font-size:12px;color:var(--muted);line-height:1.5;}
+
+  /* 버튼 */
+  .btn{display:block;width:100%;padding:16px;border-radius:12px;border:none;
+       font-size:16px;font-weight:700;font-family:'Noto Sans KR',sans-serif;
+       cursor:pointer;transition:all .2s;text-align:center;}
+  .btn-p{background:var(--navy);color:#fff;}
+  .btn-p:hover{background:var(--navy-dark);transform:translateY(-1px);box-shadow:0 6px 20px rgba(46,91,143,.3);}
+  .btn-p:disabled{background:#b0bcd0;cursor:not-allowed;transform:none;box-shadow:none;}
+  .btn-o{background:transparent;color:var(--navy);border:2px solid var(--navy);margin-top:10px;}
+  .btn-o:hover{background:#eef4ff;}
+
+  /* 완료 */
+  .done-screen{text-align:center;padding:20px 0;}
+  .done-icon{width:80px;height:80px;background:linear-gradient(135deg,var(--ok),#2ecc71);
+             border-radius:50%;display:flex;align-items:center;justify-content:center;
+             font-size:36px;margin:0 auto 20px;box-shadow:0 8px 24px rgba(52,197,139,.3);}
+  .done-screen h2{font-size:22px;font-weight:900;margin-bottom:8px;}
+  .done-screen p{font-size:14px;color:var(--muted);line-height:1.7;}
+
+  /* 유틸 박스 */
+  .info{background:#EEF4FF;border-left:4px solid var(--navy);border-radius:0 10px 10px 0;
+        padding:14px 16px;margin-bottom:20px;font-size:13px;color:var(--navy-dark);line-height:1.6;}
+  .warn{background:#FFF8E6;border-left:4px solid #f0b429;border-radius:0 10px 10px 0;
+        padding:14px 16px;margin-top:14px;font-size:13px;color:#7a5c00;line-height:1.6;display:none;}
+
+  /* 로딩 */
+  .spin-wrap{display:none;justify-content:center;align-items:center;gap:8px;padding:16px;
+             color:var(--muted);font-size:14px;}
+  .spin-wrap.show{display:flex;}
+  .spinner{width:20px;height:20px;border:3px solid var(--border);border-top-color:var(--navy);
+           border-radius:50%;animation:spin .8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  @media(max-width:480px){
+    .hd{padding:32px 20px 40px;} .hd h1{font-size:19px;}
+    .card{padding:22px 18px;} .pdf-wrap iframe{height:320px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- 헤더 -->
+<div class="hd">
+  <div class="badge">WAY 가족돌봄청년 지원사업</div>
+  <h1>자기돌봄비 <span>안내 확인서</span></h1>
+  <p>안내서를 꼼꼼히 읽으셨나요?<br>아래 확인을 완료해야 지원이 시작됩니다.</p>
+</div>
+
+<!-- 스텝 바 -->
+<div class="sb">
+  <div class="si active" id="sd1"><div class="sd">1</div><div class="sl">본인확인</div></div>
+  <div class="si" id="sd2"><div class="sd">2</div><div class="sl">안내서</div></div>
+  <div class="si" id="sd3"><div class="sd">3</div><div class="sl">이해확인</div></div>
+  <div class="si" id="sd4"><div class="sd">4</div><div class="sl">서류서명</div></div>
+  <div class="si" id="sd5"><div class="sd">5</div><div class="sl">완료</div></div>
+</div>
+
+<div class="wrap">
+
+  <!-- ══ STEP 1: 본인 확인 ══ -->
+  <div class="card active" id="s1">
+    <div class="eyebrow">Step 1 / 5</div>
+    <div class="ttl">본인 확인</div>
+    <div class="desc">자기돌봄비 선정자 본인의 정보를 입력해 주세요.</div>
+
+    <div class="field">
+      <label>이름 <span class="req">*</span></label>
+      <input type="text" id="uname" placeholder="홍길동" autocomplete="name">
+      <div class="errmsg" id="en">이름을 입력해 주세요.</div>
+    </div>
+    <div class="field">
+      <label>생년월일 <span class="req">*</span></label>
+      <input type="text" id="ubirth" placeholder="예: 19990315 (8자리)" maxlength="8" inputmode="numeric">
+      <div class="errmsg" id="eb">생년월일 8자리를 입력해 주세요. (예: 19990315)</div>
+    </div>
+
+    <div class="info">📋 입력하신 정보는 응답자 확인 용도로만 활용되며 안전하게 관리됩니다.</div>
+
+    <!-- 문의처 -->
+    <div class="contact-box">
+      <div class="ct-title">💬 궁금한 점이 있으신가요?</div>
+      <div class="ct-row">
+        <div class="ct-icon ph">📞</div>
+        <div class="ct-info">
+          <strong>돌봄120 콜센터</strong>
+          <span><a href="tel:1668-0120">1668-0120</a> · 돌봄기록서, 자격 상실 등 자기돌봄비 전반 문의</span>
+        </div>
+      </div>
+      <div class="ct-row">
+        <div class="ct-icon kk">💛</div>
+        <div class="ct-info">
+          <strong>카카오톡 채널</strong>
+          <span>채널명 검색: <b>서울시가족돌봄청년지원 WAY</b> · 1:1 문의 및 안내</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-p" onclick="go(2)">다음 단계로 →</button>
+  </div>
+
+  <!-- ══ STEP 2: 안내서 확인 ══ -->
+  <div class="card" id="s2">
+    <div class="eyebrow">Step 2 / 5</div>
+    <div class="ttl">자기돌봄비 안내서 확인</div>
+    <div class="desc">아래 안내서를 끝까지 확인해 주세요.<br>사용 방법, 돌봄기록서 작성법, 주의사항이 담겨 있습니다.</div>
+
+    <div class="pdf-wrap">
+      <div class="pdf-hd">📄 서울시 가족돌봄청소년·청년 자기돌봄비 안내서</div>
+      <iframe id="pdf-frame" src="./자기돌봄비안내.pdf" title="자기돌봄비 안내서"></iframe>
+    </div>
+
+    <div class="info" style="margin-bottom:16px;">
+      ℹ️ PDF가 보이지 않으면 아래 버튼으로 별도 탭에서 확인하세요.<br><br>
+      <a href="./자기돌봄비안내.pdf" target="_blank" id="pdf-link"
+         style="display:inline-block;padding:8px 16px;background:var(--navy);color:#fff;
+                border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;">
+        📄 안내서 새 탭에서 열기
+      </a>
+    </div>
+
+    <label class="pdf-check" id="pcheck" onclick="togglePdf()">
+      <input type="checkbox" id="cbpdf">
+      <div class="pck" id="pckbox">✓</div>
+      <div class="pct">
+        <strong>자기돌봄비 안내서를 확인하였습니다.</strong>
+        <span>사용 방법, 돌봄기록서 제출 방법, 주의사항 등 내용을 읽고 이해하였습니다.</span>
+      </div>
+    </label>
+
+    <div class="warn" id="wpdf" style="display:none;">⚠️ 안내서를 확인하셨다면 위 체크박스를 선택해 주세요.</div>
+
+    <div style="background:#f5f8ff;border-radius:10px;padding:14px 16px;margin-bottom:20px;
+                font-size:12px;color:var(--muted);line-height:1.9;">
+      📞 <b>돌봄120</b> <a href="tel:1668-0120" style="color:var(--navy);font-weight:700;">1668-0120</a>
+      &nbsp;|&nbsp;
+      💛 카카오톡 <b>서울시가족돌봄청년지원 WAY</b>
+    </div>
+
+    <button class="btn btn-p" onclick="go(3)">다음 단계로 →</button>
+    <button class="btn btn-o" onclick="go(1)">← 이전으로</button>
+  </div>
+
+  <!-- ══ STEP 3: 이해도 퀴즈 ══ -->
+  <div class="card" id="s3">
+    <div class="eyebrow">Step 3 / 5</div>
+    <div class="ttl">안내서 이해 확인</div>
+    <div class="desc">핵심 내용 3가지를 확인합니다. 답을 고른 후에도 <b>✏️ 다시 선택하기</b>로 수정할 수 있습니다.</div>
+
+    <div class="prog-wrap">
+      <div class="prog-label">
+        <span id="ptxt">0 / 3 완료</span>
+        <span id="pscr">0점</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="pbar"></div></div>
+    </div>
+
+    <!-- Q1 -->
+    <div class="qblock" id="qb1">
+      <div class="qnum">문제 1 / 3</div>
+      <div class="qq">돌봄기록서와 카드사용 내역서는 몇 개월마다 1회 제출해야 하나요?</div>
+      <div class="qopts" id="qo1">
+        <div class="qopt" data-q="1" data-v="A" onclick="pick(1,'A')"><div class="odot">A</div>1개월마다</div>
+        <div class="qopt" data-q="1" data-v="B" onclick="pick(1,'B')"><div class="odot">B</div>2개월마다</div>
+        <div class="qopt" data-q="1" data-v="C" onclick="pick(1,'C')"><div class="odot">C</div>3개월마다</div>
+        <div class="qopt" data-q="1" data-v="D" onclick="pick(1,'D')"><div class="odot">D</div>참여 기간 종료 시 1회</div>
+      </div>
+      <div class="qresult" id="qr1"></div>
+      <button class="retry-btn" id="rb1" onclick="retry(1)">✏️ 다시 선택하기</button>
+    </div>
+
+    <!-- Q2 -->
+    <div class="qblock" id="qb2">
+      <div class="qnum">문제 2 / 3</div>
+      <div class="qq">다음 중 자기돌봄비 사용이 <b>제한</b>되는 항목은?</div>
+      <div class="qopts" id="qo2">
+        <div class="qopt" data-q="2" data-v="A" onclick="pick(2,'A')"><div class="odot">A</div>학원비 결제</div>
+        <div class="qopt" data-q="2" data-v="B" onclick="pick(2,'B')"><div class="odot">B</div>카카오페이로 결제</div>
+        <div class="qopt" data-q="2" data-v="C" onclick="pick(2,'C')"><div class="odot">C</div>헬스장 이용료 결제</div>
+        <div class="qopt" data-q="2" data-v="D" onclick="pick(2,'D')"><div class="odot">D</div>병원 진료비 결제</div>
+      </div>
+      <div class="qresult" id="qr2"></div>
+      <button class="retry-btn" id="rb2" onclick="retry(2)">✏️ 다시 선택하기</button>
+    </div>
+
+    <!-- Q3 -->
+    <div class="qblock" id="qb3">
+      <div class="qnum">문제 3 / 3</div>
+      <div class="qq">돌봄기록서를 누적 <b>몇 회</b> 미제출하면 다음 회차 지급이 중단되나요?</div>
+      <div class="qopts" id="qo3">
+        <div class="qopt" data-q="3" data-v="A" onclick="pick(3,'A')"><div class="odot">A</div>1회</div>
+        <div class="qopt" data-q="3" data-v="B" onclick="pick(3,'B')"><div class="odot">B</div>2회</div>
+        <div class="qopt" data-q="3" data-v="C" onclick="pick(3,'C')"><div class="odot">C</div>3회</div>
+        <div class="qopt" data-q="3" data-v="D" onclick="pick(3,'D')"><div class="odot">D</div>4회</div>
+      </div>
+      <div class="qresult" id="qr3"></div>
+      <button class="retry-btn" id="rb3" onclick="retry(3)">✏️ 다시 선택하기</button>
+    </div>
+
+    <div id="scorebox" style="display:none;">
+      <div class="score-box">
+        <div><span class="snum" id="fscore">0</span><span class="sden"> / 3</span></div>
+        <div class="smsg" id="fmsg"></div>
+      </div>
+    </div>
+
+    <button class="btn btn-p" id="btn3" onclick="go(4)" disabled>다음 단계로 →</button>
+    <button class="btn btn-o" onclick="go(2)">← 이전으로</button>
+  </div>
+
+  <!-- ══ STEP 4: 이폼사인 서명 확인 ══ -->
+  <div class="card" id="s4">
+    <div class="eyebrow">Step 4 / 5</div>
+    <div class="ttl">이폼사인 서류 서명 확인</div>
+    <div class="desc">이폼사인으로 발송된 3가지 서류에 서명하셨나요?<br>서명을 완료한 서류를 모두 체크해 주세요.</div>
+
+    <div class="info">
+      💡 이폼사인 서명 링크는 <b>카카오톡 또는 문자</b>로 발송됩니다.<br>
+      아직 서명하지 않으셨다면 먼저 이폼사인을 완료한 후 체크해 주세요.<br><br>
+      📞 서명 관련 문의: 돌봄120 <a href="tel:1668-0120" style="color:var(--navy);font-weight:700;">1668-0120</a>
+      &nbsp;|&nbsp; 💛 카카오톡 <b>서울시가족돌봄청년지원 WAY</b>
+    </div>
+
+    <div class="elist">
+      <label class="eitem" id="ei1" onclick="chkE(1)">
+        <input type="checkbox" id="ce1">
+        <div class="eck" id="ek1">✓</div>
+        <div class="etxt">
+          <strong>📝 자기돌봄비 이행서약서</strong>
+          <span>지원금 사용 목적 준수, 변경사항 보고, 필수이행사항 확인 등 서약</span>
+        </div>
+      </label>
+      <label class="eitem" id="ei2" onclick="chkE(2)">
+        <input type="checkbox" id="ce2">
+        <div class="eck" id="ek2">✓</div>
+        <div class="etxt">
+          <strong>📝 자격 유지·상실사항 확인서</strong>
+          <span>자격 유지 조건 및 상실 사유 확인, 돌봄 러닝스쿨 참여 동의</span>
+        </div>
+      </label>
+      <label class="eitem" id="ei3" onclick="chkE(3)">
+        <input type="checkbox" id="ce3">
+        <div class="eck" id="ek3">✓</div>
+        <div class="etxt">
+          <strong>📝 개인정보 수집·이용 및 제공 동의서</strong>
+          <span>카드 사용내역 수집·이용 및 서울시복지재단 제공 동의</span>
+        </div>
+      </label>
+    </div>
+
+    <div class="warn" id="ewarn">⚠️ 3가지 서류를 모두 체크해야 제출할 수 있습니다.</div>
+
+    <div style="margin-top:20px;">
+      <button class="btn btn-p" id="btsub" onclick="submit()">확인 완료 및 제출 →</button>
+      <button class="btn btn-o" onclick="go(3)">← 이전으로</button>
+    </div>
+    <div class="spin-wrap" id="loading"><div class="spinner"></div><span>제출 중입니다...</span></div>
+  </div>
+
+  <!-- ══ STEP 5: 완료 ══ -->
+  <div class="card" id="s5">
+    <div class="done-screen">
+      <div class="done-icon">🎉</div>
+      <h2>확인 완료!</h2>
+      <p style="margin:12px 0 6px;">안내서 확인, 이해도 확인, 서류 서명 확인이<br>모두 완료되었습니다.</p>
+      <p style="color:var(--muted);font-size:12px;">담당자가 내용을 확인 후 안내드릴 예정입니다.</p>
+
+      <div style="background:var(--bg);border-radius:12px;padding:20px;margin-top:24px;text-align:left;">
+        <div style="font-size:12px;color:var(--muted);font-weight:700;margin-bottom:12px;letter-spacing:.05em;">📋 제출 내역 요약</div>
+        <div id="sumcont" style="font-size:13px;line-height:2;color:var(--text);"></div>
+      </div>
+
+      <div style="margin-top:16px;padding:16px;background:#FFF8E6;border-radius:12px;text-align:left;">
+        <div style="font-size:13px;font-weight:700;color:#7a5c00;margin-bottom:6px;">📅 앞으로 챙겨야 할 일정</div>
+        <div style="font-size:12px;color:#7a5c00;line-height:1.9;">
+          · 1회차 지급: 5월 15일(금)<br>
+          · 1회차 돌봄기록서 제출: 5월 15일 ~ 6월 10일<br>
+          · 2회차 지급: 6월 29일(월)<br>
+          · 돌봄 러닝스쿨 1회 필수 참여 (별도 문자 안내)
+        </div>
+      </div>
+
+      <div style="margin-top:16px;padding:16px;background:#EEF4FF;border-radius:12px;text-align:left;">
+        <div style="font-size:13px;font-weight:700;color:var(--navy-dark);margin-bottom:8px;">💬 문의처</div>
+        <div style="font-size:12px;color:var(--navy-dark);line-height:2;">
+          📞 돌봄120 콜센터: <a href="tel:1668-0120" style="color:var(--navy);font-weight:700;">1668-0120</a><br>
+          💛 카카오톡 채널: <b>서울시가족돌봄청년지원 WAY</b>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── 설정 ──────────────────────────────────────────────────────────
+const GS_URL = 'https://script.google.com/macros/s/AKfycbyw5_dk_sa1IPQX1BuKk6Tj4XvWUs5eV2Dm064iQcAJnvrLUuXQ9GPnGG9H5QikTXEd/exec';
+
+// ── 상태 ──────────────────────────────────────────────────────────
+let cur = 1;
+let qsel  = {1:null, 2:null, 3:null};  // 현재 선택값
+let qconf = {1:false,2:false,3:false}; // 확정 여부
+const ANS = {1:'B', 2:'B', 3:'B'};
+const FB  = {
+  1:{ok:'✅ 정답! 2개월마다 1회, 참여 기간 총 4회 제출합니다. 카드사용 내역서도 함께 제출해야 합니다.',
+     ng:'❌ 정답은 B입니다. 돌봄기록서는 2개월마다 1회(총 4회) 제출이 필수입니다. 누적 2회 미제출 시 지급이 중단됩니다.'},
+  2:{ok:'✅ 정답! 카카오페이·네이버페이 등 간편결제는 지출 내역 확인이 어려워 사용할 수 없습니다. 전용 신한카드 체크카드로만 결제해야 합니다.',
+     ng:'❌ 정답은 B입니다. 카카오페이 등 간편결제는 사용 불가합니다. 전용 신한카드 체크카드로만 결제해야 합니다.'},
+  3:{ok:'✅ 정답! 1회 미제출은 경고, 누적 2회 미제출 시 다음 회차 지급이 중단됩니다. 마감일을 꼭 확인하세요!',
+     ng:'❌ 정답은 B입니다. 1회 미제출은 경고, 누적 2회 미제출 시 지급이 중단됩니다.'}
+};
+
+// ── 스텝 이동 ──────────────────────────────────────────────────────
+function go(n){
+  if(n===2){
+    const nm=document.getElementById('uname').value.trim();
+    const bt=document.getElementById('ubirth').value.trim();
+    let ok=true;
+    if(!nm){document.getElementById('en').style.display='block';ok=false;}
+    else document.getElementById('en').style.display='none';
+    if(!/^\d{8}$/.test(bt)){document.getElementById('eb').style.display='block';ok=false;}
+    else document.getElementById('eb').style.display='none';
+    if(!ok)return;
+  }
+  if(n===3){
+    if(!document.getElementById('cbpdf').checked){
+      document.getElementById('wpdf').style.display='block'; return;
+    }
+    document.getElementById('wpdf').style.display='none';
+  }
+  if(n===4){
+    if(!Object.values(qconf).every(Boolean)){alert('3가지 문제를 모두 풀어주세요!');return;}
+  }
+  document.getElementById('s'+cur).classList.remove('active');
+  cur=n;
+  document.getElementById('s'+n).classList.add('active');
+  dots(n);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function dots(n){
+  for(let i=1;i<=5;i++){
+    const el=document.getElementById('sd'+i);
+    el.classList.remove('active','done');
+    if(i<n)el.classList.add('done');
+    else if(i===n)el.classList.add('active');
+  }
+}
+
+// ── PDF 체크 ───────────────────────────────────────────────────────
+function togglePdf(){
+  const cb=document.getElementById('cbpdf');
+  cb.checked=!cb.checked;
+  document.getElementById('pcheck').classList.toggle('on',cb.checked);
+  if(cb.checked)document.getElementById('wpdf').style.display='none';
+}
+
+// ── 퀴즈: 선택 ────────────────────────────────────────────────────
+function pick(q,v){
+  if(qconf[q])return; // 확정 상태면 무시 (retry 후 다시 선택 가능)
+
+  qsel[q]=v;
+  // 선택 표시
+  document.querySelectorAll('#qo'+q+' .qopt').forEach(o=>{
+    o.classList.remove('sel','oc','ow');
+    if(o.dataset.v===v)o.classList.add('sel');
+  });
+
+  // 채점
+  const ok=v===ANS[q];
+  const rb=document.getElementById('qr'+q);
+  rb.textContent=FB[q][ok?'ok':'ng'];
+  rb.className='qresult '+(ok?'ok':'ng');
+
+  // 색상
+  document.querySelectorAll('#qo'+q+' .qopt').forEach(o=>{
+    o.classList.remove('sel','oc','ow');
+    if(o.dataset.v===v) o.classList.add(ok?'oc':'ow');
+    if(!ok && o.dataset.v===ANS[q]) o.classList.add('oc');
+  });
+
+  qconf[q]=true;
+  document.getElementById('rb'+q).classList.add('show');
+  updProg();
+}
+
+// ── 퀴즈: 다시 선택 ───────────────────────────────────────────────
+function retry(q){
+  qconf[q]=false;
+  qsel[q]=null;
+  document.querySelectorAll('#qo'+q+' .qopt').forEach(o=>o.classList.remove('sel','oc','ow'));
+  const rb=document.getElementById('qr'+q);
+  rb.className='qresult'; rb.textContent='';
+  document.getElementById('rb'+q).classList.remove('show');
+  updProg();
+}
+
+// ── 퀴즈: 진행 업데이트 ───────────────────────────────────────────
+function updProg(){
+  const done=Object.values(qconf).filter(Boolean).length;
+  const sc=Object.keys(qconf).filter(k=>qconf[k]&&qsel[k]===ANS[k]).length;
+  document.getElementById('ptxt').textContent=done+' / 3 완료';
+  document.getElementById('pscr').textContent=sc+'점';
+  document.getElementById('pbar').style.width=(done/3*100)+'%';
+  if(done===3){
+    document.getElementById('scorebox').style.display='block';
+    document.getElementById('fscore').textContent=sc;
+    const msgs=['틀린 문제를 확인하고 안내서를 한번 더 살펴보세요 💙',
+                '거의 다 맞히셨어요! 틀린 부분의 설명을 확인해 보세요.',
+                '완벽해요! 안내서 내용을 정확히 이해하셨네요 🎉'];
+    document.getElementById('fmsg').textContent=msgs[Math.min(sc,2)];
+    document.getElementById('btn3').disabled=false;
+  }else{
+    document.getElementById('scorebox').style.display='none';
+    document.getElementById('btn3').disabled=true;
+  }
+}
+
+// ── 이폼사인 체크 ─────────────────────────────────────────────────
+function chkE(n){
+  const cb=document.getElementById('ce'+n);
+  cb.checked=!cb.checked;
+  document.getElementById('ei'+n).classList.toggle('on',cb.checked);
+  if([1,2,3].every(i=>document.getElementById('ce'+i).checked))
+    document.getElementById('ewarn').style.display='none';
+}
+
+// ── 제출 ──────────────────────────────────────────────────────────
+function submit(){
+  if(![1,2,3].every(i=>document.getElementById('ce'+i).checked)){
+    document.getElementById('ewarn').style.display='block'; return;
+  }
+  const nm=document.getElementById('uname').value.trim();
+  const bt=document.getElementById('ubirth').value.trim();
+  const sc=Object.keys(qconf).filter(k=>qconf[k]&&qsel[k]===ANS[k]).length;
+  const pl={
+    timestamp:new Date().toLocaleString('ko-KR',{timeZone:'Asia/Seoul'}),
+    name:nm, birth:bt, pdfConfirmed:'확인완료',
+    quizScore:sc+'/3',
+    q1:(qsel[1]||'-')+(qconf[1]?(qsel[1]===ANS[1]?'(O)':'(X)'):''),
+    q2:(qsel[2]||'-')+(qconf[2]?(qsel[2]===ANS[2]?'(O)':'(X)'):''),
+    q3:(qsel[3]||'-')+(qconf[3]?(qsel[3]===ANS[3]?'(O)':'(X)'):''),
+    esign1:'완료', esign2:'완료', esign3:'완료'
+  };
+  document.getElementById('btsub').disabled=true;
+  document.getElementById('loading').classList.add('show');
+  fetch(GS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(pl)})
+    .then(()=>done(pl)).catch(()=>done(pl));
+}
+
+function done(pl){
+  document.getElementById('loading').classList.remove('show');
+  go(5);
+  const sc=Object.keys(qconf).filter(k=>qconf[k]&&qsel[k]===ANS[k]).length;
+  document.getElementById('sumcont').innerHTML=`
+    <div>👤 <b>이름:</b> ${pl.name}</div>
+    <div>🎂 <b>생년월일:</b> ${pl.birth}</div>
+    <div>📄 <b>안내서 확인:</b> 완료</div>
+    <div>📝 <b>이해도 점수:</b> ${sc}점 / 3점</div>
+    <div>✅ <b>이폼사인 서명:</b> 3개 완료</div>
+    <div>🕐 <b>제출 일시:</b> ${pl.timestamp}</div>`;
+}
+</script>
+</body>
+</html>
